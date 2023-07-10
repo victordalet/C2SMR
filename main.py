@@ -4,7 +4,7 @@ from Detector.sea import DetectorSea
 
 class main:
     def __init__(self):
-        self.FILE = "../584.png"
+        self.FILE = "../714.png"
         self.image = cv2.imread(self.FILE)
         self.height, self.width = self.image.shape[:2]
         self.detector_sea = DetectorSea()
