@@ -4,7 +4,6 @@ from tensorflow.keras import layers
 
 
 class TrainCloud:
-
     def __init__(self):
         self.predicted_class = None
         self.test_image = None
@@ -71,7 +70,6 @@ class TrainCloud:
             layers.Dense(128, activation='relu'),
             layers.Dense(self.nb_class_cloud, activation='softmax')
         ])
-
         # ---- compiling and training the model ---- #
         self.model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
         self.model.fit(self.train_dataset, epochs=self.nb_epochs)
@@ -90,6 +88,7 @@ class TrainCloud:
         self.test_image = tf.expand_dims(self.test_image, 0)
 
         self.predicted_class = self.model.predict(self.test_image)[0]
+        print(self.predicted_class)
         class_max_temp = 0
         for i in range(len(self.predicted_class)):
             if self.predicted_class[class_max_temp] < self.predicted_class[i]:

@@ -3,30 +3,32 @@ import numpy as np
 
 class DetectorSea:
     def __init__(self):
+        self.merged_mask = None
         self.first_height = None
-        self.lower_blue = np.array([70, 50, 50])
-        self.upper_blue = np.array([160, 255, 255])
+        self.lower_blue = np.array([90, 50, 50])
+        self.upper_blue = np.array([130, 255, 255])
+        self.lower_gray = np.array([100, 0, 100])
+        self.upper_gray = np.array([200, 50, 200])
+        self.lower_green = np.array([40, 50, 50])
+        self.upper_green = np.array([80, 255, 255])
         self.max_height_in_px = 50
         self.max_size_of_little_items = 50
         self.color_line = (211, 130, 49)
 
-    def cut_line(self, contours):
-        if self.first_height is None:
-            self.first_height = contours[1][0][1]
-        elif self.first_height + self.max_height_in_px < contours[1][0][1]:
-            for i in range(1, len(contours)):
-                for j in range(len(contours[i])):
-                    contours[i][j][0], contours[i][j][1] = 0, 0
-
     def border_sea(self, cv2, image):
         hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         blue_mask = cv2.inRange(hsv_image, self.lower_blue, self.upper_blue)
-        contours, _ = cv2.findContours(blue_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        final_contours = []
-        ##### REMOVE LITTLE ITEM BLUE #####
-        for i in range(len(contours)):
-            if len(contours[i]) > self.max_size_of_little_items:
-                self.cut_line(contours[i])
-                final_contours.append(contours[i])
-        final_contours = tuple(final_contours)
-        cv2.drawContours(image, final_contours, -1, self.color_line, 2)
+        gray_mask = cv2.inRange(hsv_image, self.lower_gray, self.upper_gray)
+        green_mask = cv2.inRange(hsv_image, self.lower_green, self.upper_green)
+        self.merged_mask = cv2.bitwise_or(blue_mask, cv2.bitwise_or(gray_mask, green_mask))
+        self.percentage_of_sea()
+        return cv2.bitwise_and(image, image, mask=self.merged_mask)
+
+    def percentage_of_sea(self):
+        nb_total_pixel_filter_black, nb_total_pixel = 0, 0
+        for i in range(len(self.merged_mask)):
+            for j in range(len(self.merged_mask[i])):
+                nb_total_pixel += 1
+                if self.merged_mask[i][j] == 0:
+                    nb_total_pixel_filter_black += 1
+        print('The sea occupies {0:.2f}% of the visibility'.format(100 - nb_total_pixel_filter_black / nb_total_pixel * 100))
