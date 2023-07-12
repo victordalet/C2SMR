@@ -63,8 +63,8 @@ class CNN:
 
     def eval(self):
         self.loss, self.accuracy = self.model.evaluate(self.train_dataset)
-        print(f"Loss: {self.loss}")
-        print(f"Accuracy: {self.accuracy}")
+        print("Loss: {}".format(self.loss))
+        print("Accuracy: {}".format(self.accuracy))
 
     def test(self):
         self.test_image = keras.preprocessing.image.load_img(
@@ -80,7 +80,7 @@ class CNN:
         for i in range(len(self.predicted_class)):
             if self.predicted_class[class_max_temp] < self.predicted_class[i]:
                 class_max_temp = i
-        print(self.class_name[class_max_temp])
+        print("Prediction : {}".format(self.class_name[class_max_temp]))
 
     def save(self):
         self.model.save_weights(self.path_save_weights)
