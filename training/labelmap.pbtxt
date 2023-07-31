@@ -1,0 +1,19 @@
+item {
+  id: 1
+  name: 'Person in water'
+}
+
+item {
+  id: 2
+  name: 'Person drowning'
+}
+
+item {
+  id: 3
+  name: 'Person out of water'
+}
+
+item {
+  id: 4
+  name: 'Boat'
+}
